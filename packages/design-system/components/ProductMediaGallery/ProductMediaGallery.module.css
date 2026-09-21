@@ -1,34 +1,107 @@
 .root {
+  --product-media-thumbnail-size: clamp(
+    var(--space-800),
+    calc((100cqw - var(--space-500)) / 6),
+    calc(var(--space-1000) + var(--space-100))
+  );
+
+  box-sizing: border-box;
   display: grid;
   min-width: 0;
+  width: 100%;
+  max-width: none;
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
   color: var(--text-primary);
   font-family: var(--font-family-ios);
+  container-type: inline-size;
+}
+
+@media (min-width: 1024px) {
+  .root {
+    max-width: calc(var(--space-1000) * 7);
+  }
 }
 
 .thumbnails {
+  position: relative;
   display: flex;
   min-width: 0;
   grid-row: 2;
   flex-direction: row;
   gap: var(--space-100);
   padding: var(--space-150) 0;
-  overflow-x: auto;
+  overflow: hidden;
   scroll-padding-inline: 0;
+}
+
+.thumbnails[data-pinned-layout="edge"]::after {
+  content: "";
+  position: absolute;
+  top: var(--space-150);
+  right: var(--product-media-thumbnail-size);
+  bottom: var(--space-150);
+  z-index: 1;
+  width: var(--space-400);
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--surface-primary)
+  );
+  pointer-events: none;
+}
+
+.thumbnails > .thumbnailButton[data-pinned="true"] {
+  z-index: 2;
+}
+
+.thumbnails[data-pinned-layout="inline"] .thumbnailScroller {
+  width: max-content;
+  max-width: 100%;
+  flex: 0 1 auto;
+  overflow-x: visible;
+}
+
+.thumbnailScroller {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: var(--space-100);
+  overflow-x: auto;
   scroll-snap-type: inline mandatory;
   scrollbar-width: none;
 }
 
-.thumbnails::-webkit-scrollbar {
+.thumbnailScroller::-webkit-scrollbar {
   display: none;
+}
+
+@container (max-width: 423.98px) {
+  .thumbnails {
+    --product-media-thumbnail-size: clamp(
+      var(--space-800),
+      calc((100cqw - var(--space-400)) / 5),
+      calc(var(--space-1000) + var(--space-100))
+    );
+  }
+}
+
+@container (max-width: 351.98px) {
+  .thumbnails {
+    --product-media-thumbnail-size: clamp(
+      var(--space-800),
+      calc((100cqw - var(--space-300)) / 4),
+      calc(var(--space-1000) + var(--space-100))
+    );
+  }
 }
 
 .thumbnailButton {
   box-sizing: border-box;
+  position: relative;
   display: grid;
-  width: var(--space-1000);
-  height: var(--space-1000);
+  width: var(--product-media-thumbnail-size);
+  height: var(--product-media-thumbnail-size);
   flex: 0 0 auto;
   padding: 0;
   overflow: hidden;
@@ -39,6 +112,21 @@
   background: var(--fill-tertiary);
   cursor: pointer;
   scroll-snap-align: start;
+}
+
+.thumbnailOverlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-050);
+  background: var(--overlay-scrim);
+  color: var(--text-on-emphasis);
+  font-size: var(--font-size-caption-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-caption-sm);
+  text-align: center;
+  pointer-events: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -66,6 +154,11 @@
 }
 
 .stage {
+  --product-media-zoom-x: 50%;
+  --product-media-zoom-y: 50%;
+  --product-media-zoom-lens-x: 50%;
+  --product-media-zoom-lens-y: 50%;
+
   position: relative;
   display: grid;
   min-width: 0;
@@ -76,6 +169,11 @@
   place-items: center;
   border-radius: var(--radius-surface-default);
   background: var(--fill-tertiary);
+}
+
+.zoomPane,
+.zoomLens {
+  display: none;
 }
 
 .navigationButton {
@@ -107,6 +205,56 @@
 }
 
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .stage[data-zoom-active="true"] {
+    z-index: 3;
+    overflow: visible;
+  }
+
+  .stage[data-zoom-active="true"] .imageRail {
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  .zoomPane {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: calc(100% + var(--space-400));
+    z-index: 4;
+    display: none;
+    width: var(--product-media-zoom-pane-size, 100%);
+    height: var(--product-media-zoom-pane-size, 100%);
+    overflow: hidden;
+    border: var(--stroke-default) solid var(--border-default);
+    border-radius: var(--radius-surface-default);
+    background-color: var(--surface-primary);
+    background-repeat: no-repeat;
+    background-position: var(--product-media-zoom-x) var(--product-media-zoom-y);
+    background-size: 250% 250%;
+    pointer-events: none;
+  }
+
+  .stage[data-zoom-active="true"] .zoomPane {
+    display: block;
+  }
+
+  .zoomLens {
+    position: absolute;
+    top: var(--product-media-zoom-lens-y);
+    left: var(--product-media-zoom-lens-x);
+    display: none;
+    width: 40%;
+    height: 40%;
+    transform: translate(-50%, -50%);
+    border: var(--stroke-default) solid var(--border-default);
+    background: var(--product-card-add-surface);
+    pointer-events: none;
+  }
+
+  .stage[data-zoom-active="true"] .zoomLens {
+    display: block;
+  }
+
   .navigationButton {
     visibility: hidden;
     pointer-events: none;
@@ -117,6 +265,10 @@
   .root:not([data-pointer-focus="true"]):has(:focus-visible) .navigationButton {
     visibility: visible;
     pointer-events: auto;
+  }
+
+  .navigationButton {
+    z-index: 5;
   }
 }
 
@@ -190,7 +342,9 @@
 
 .previewStage {
   position: absolute;
-  inset: 0 calc(var(--space-800) * 2);
+  inset-block: 0;
+  inset-inline-start: 0;
+  inset-inline-end: calc(var(--space-1000) * 3 + var(--space-300));
 }
 
 .previewImageRail {
@@ -220,11 +374,12 @@
 
 .previewSidebar {
   position: absolute;
-  top: var(--space-400);
-  bottom: var(--space-400);
-  left: var(--space-300);
+  top: var(--space-300);
+  right: calc(var(--space-1000) + var(--space-300));
+  bottom: var(--space-300);
+  left: auto;
   display: flex;
-  width: var(--space-1000);
+  width: calc(var(--space-1000) * 2);
   flex-direction: column;
   align-items: center;
   gap: var(--space-100);
@@ -357,11 +512,6 @@
 
   .navigationButton {
     display: none;
-  }
-
-  .thumbnailButton {
-    width: var(--space-800);
-    height: var(--space-800);
   }
 
   .previousButton {

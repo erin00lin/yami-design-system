@@ -99,7 +99,7 @@
       "status": "experimental",
       "version": "0.1.0",
       "path": "registry-items/dialog.json",
-      "digest": "06507b21a8697b8b7320b1de807b1a971da70373a12d7f648d02673ad36b48d7"
+      "digest": "c62241680f217ffb85810fef98174fc237bdfd6defc2089aab140738fcfe2421"
     },
     {
       "name": "divider",
@@ -144,7 +144,7 @@
       "status": "stable",
       "version": "0.3.0",
       "path": "registry-items/hero-banner.json",
-      "digest": "6677552c03033ab953a7c3c953107fff16f7aaa68556026d0862d8f8909427cd"
+      "digest": "2d3abf456c702e07f76e921046bc24810addd5788dcaf87628e24aa58bc83e25"
     },
     {
       "name": "horizontal-scroll-list",
@@ -189,7 +189,7 @@
       "status": "experimental",
       "version": "0.1.0",
       "path": "registry-items/product-media-gallery.json",
-      "digest": "ed3b87dd99ea35d4c2acb55ed3789cb138a89200f3f7b35ba18648e1277419ea"
+      "digest": "228cca1f4dca081998c4df79b258e8d52c4ddf3a5049b5e64cc10136af25b888"
     },
     {
       "name": "product-review-section",

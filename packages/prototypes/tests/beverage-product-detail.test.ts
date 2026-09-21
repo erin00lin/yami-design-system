@@ -13,6 +13,10 @@ describe("Beverage product detail fixture", () => {
     expect(fixture.images).toHaveLength(11);
     expect(new Set(fixture.images.map((image) => image.src)).size).toBe(11);
     expect(fixture.images.every((image) => image.alt.includes("BINGGRAE") && typeof image.src === "string" && image.src.includes("/item/"))).toBe(true);
+    expect(fixture.images.at(-1)).toMatchObject({
+      thumbnailPinned: true,
+      thumbnailOverlayLabel: "Nutrition Facts",
+    });
     expect(fixture.optionGroups).toEqual([]);
     expect(fixture.skus).toBeUndefined();
     expect(fixture.ranking).toBe("");
@@ -32,6 +36,14 @@ describe("Beverage product detail fixture", () => {
     expect(fixture.specifications).toContainEqual({ label: locale === "zh" ? "储存方式" : "Storage", value: locale === "zh" ? "开封后冷藏" : "Refrigerate after opening" });
     expect(fixture.ingredients?.body).toContain("0.32%");
     expect(fixture.specifications.some((item) => item.label === (locale === "zh" ? "配料" : "Ingredients"))).toBe(false);
+  });
+
+  it("pins Skin Info on the last beauty thumbnail with the shared gallery interaction", () => {
+    const beauty = createProductDetailPageFixture();
+    expect(beauty.images.at(-1)).toMatchObject({
+      thumbnailPinned: true,
+      thumbnailOverlayLabel: "Skin Info",
+    });
   });
 
   it.each(["en", "zh"] as const)("uses source-linked beverage recommendations in %s", (locale) => {

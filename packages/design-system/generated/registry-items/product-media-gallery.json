@@ -76,6 +76,7 @@
       "--space-200",
       "--space-300",
       "--space-400",
+      "--space-500",
       "--space-600",
       "--space-800",
       "--stroke-default",
@@ -139,6 +140,10 @@
         "property": "mobile next-image preview reservation",
         "selector": ".slide"
       },
+      "--space-500": {
+        "property": "six-slot thumbnail gap reservation",
+        "selector": ".root"
+      },
       "--product-card-add-icon": {
         "property": "color",
         "selector": ".counter"
@@ -165,5 +170,5 @@
     },
     "interactionCoverage": "covered"
   },
-  "contentDigest": "ed3b87dd99ea35d4c2acb55ed3789cb138a89200f3f7b35ba18648e1277419ea"
+  "contentDigest": "228cca1f4dca081998c4df79b258e8d52c4ddf3a5049b5e64cc10136af25b888"
 }

@@ -19,6 +19,8 @@ import {
 } from "@yami/design-system";
 
 import styles from "./ProductDetailPage.module.css";
+import { ProductPricing } from "./components/ProductPricing";
+import { ProductStickyPurchaseBar } from "./components/ProductStickyPurchaseBar";
 import type { ProductDetailPageProps } from "./ProductDetailPage.types";
 import { ProductNutritionSheet } from "./ProductNutritionSheet";
 import { ProductDetailSheet } from "./ProductDetailSheet";
@@ -215,6 +217,8 @@ export function ProductDetailPage({
   priceCurrent,
   priceOriginal,
   discountLabel,
+  giftCardPrice,
+  vvipPrice,
   optionGroups,
   skus,
   bestBefore,
@@ -235,7 +239,51 @@ export function ProductDetailPage({
   ...rest
 }: ProductDetailPageProps) {
   const galleryRef = useRef<ProductMediaGalleryHandle>(null);
+  const productInfoColumnRef = useRef<HTMLDivElement>(null);
+  const addToCartRef = useRef<HTMLButtonElement>(null);
+  const [zoomPaneWidth, setZoomPaneWidth] = useState<number>();
   const [nutritionOpen, setNutritionOpen] = useState(false);
+  const [stickyPurchaseVisible, setStickyPurchaseVisible] = useState(false);
+
+  useLayoutEffect(() => {
+    const column = productInfoColumnRef.current;
+    if (!column) return;
+    const updateWidth = () => {
+      const nextWidth = Math.round(column.getBoundingClientRect().width * 100) / 100;
+      setZoomPaneWidth((current) => current === nextWidth ? current : nextWidth);
+    };
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(column);
+    return () => observer.disconnect();
+  }, []);
+
+  useLayoutEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    let animationFrame = 0;
+
+    const updateStickyPurchase = () => {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = requestAnimationFrame(() => {
+        const addToCart = addToCartRef.current;
+        setStickyPurchaseVisible(
+          desktop.matches && Boolean(addToCart && addToCart.getBoundingClientRect().bottom <= 0)
+        );
+      });
+    };
+
+    updateStickyPurchase();
+    window.addEventListener("scroll", updateStickyPurchase, { passive: true });
+    window.addEventListener("resize", updateStickyPurchase);
+    desktop.addEventListener("change", updateStickyPurchase);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", updateStickyPurchase);
+      window.removeEventListener("resize", updateStickyPurchase);
+      desktop.removeEventListener("change", updateStickyPurchase);
+    };
+  }, []);
   function openSourcePreview(event: MouseEvent<HTMLAnchorElement>, sourceHref: string) {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const sourceImage = images.find((image) =>
@@ -276,6 +324,12 @@ export function ProductDetailPage({
     typeof contentMaxWidth === "number"
       ? `${contentMaxWidth}px`
       : contentMaxWidth;
+  const primaryImage = images[0];
+  const primaryImageSrc = primaryImage
+    ? typeof primaryImage.src === "string"
+      ? primaryImage.src
+      : primaryImage.src.src
+    : "";
 
   return (
     <div
@@ -295,6 +349,17 @@ export function ProductDetailPage({
           } as CSSProperties
         }
       >
+        {stickyPurchaseVisible && primaryImage ? (
+          <ProductStickyPurchaseBar
+            imageSrc={primaryImageSrc}
+            imageAlt={primaryImage.alt}
+            brand={brand}
+            title={title}
+            addToCartLabel={copy.addToCart}
+            disabled={!selectionAvailable}
+          />
+        ) : null}
+
         <div className={styles.content} data-slot="product-detail-content">
           <div
             className={styles.utilityRow}
@@ -337,6 +402,15 @@ export function ProductDetailPage({
                   <img src={icon} alt="" width={20} height={20} />
                 </Button>
               ))}
+              <Button
+                className={styles.affiliateLinkButton}
+                variant="primary"
+                form="inline"
+                size="sm"
+                data-pdp-affiliate-link="true"
+              >
+                {copy.getAffiliateLink}
+              </Button>
             </div>
           </div>
 
@@ -358,12 +432,15 @@ export function ProductDetailPage({
                   previousLabel={copy.previousImage}
                   nextLabel={copy.nextImage}
                   desktopPreview
+                  desktopZoom
+                  desktopZoomPaneWidth={zoomPaneWidth}
                   mobilePreview
                   openPreviewLabel={copy.openImagePreview}
                   closePreviewLabel={copy.closeImagePreview}
                 />
 
                 <div
+                  ref={productInfoColumnRef}
                   className={styles.productInfoColumn}
                   data-slot="product-detail-info-column"
                 >
@@ -463,23 +540,15 @@ export function ProductDetailPage({
                       </button>
                     </div>
 
-                    <div
-                      className={styles.priceRow}
-                      data-slot="product-detail-price"
-                    >
-                      <strong className={styles.priceCurrent}>
-                        {priceCurrent}
-                      </strong>
-                      <span className={styles.priceOriginal}>
-                        {priceOriginal}
-                      </span>
-                      <span
-                        className={styles.discountText}
-                        data-slot="product-detail-discount"
-                      >
-                        {discountLabel}
-                      </span>
-                    </div>
+                    <ProductPricing
+                      regular={{
+                        currentPrice: priceCurrent,
+                        originalPrice: priceOriginal,
+                        discountLabel,
+                      }}
+                      giftCard={giftCardPrice}
+                      vvip={vvipPrice}
+                    />
                     {optionGroups.length === 0 && (
                       <p
                         className={styles.bestBefore}
@@ -768,6 +837,7 @@ export function ProductDetailPage({
                       </div>
 
                       <Button
+                        ref={addToCartRef}
                         variant="emphasis"
                         form="full"
                         size="lg"

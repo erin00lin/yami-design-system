@@ -127,7 +127,6 @@
 .brandRow,
 .rankingRow,
 .ratingRow,
-.priceRow,
 .purchaseActions,
 .quantityRow {
   display: flex;
@@ -153,9 +152,9 @@
 
 .title {
   margin: 0;
-  font-size: var(--font-size-heading-4xl);
+  font-size: var(--font-size-heading-2xl);
   font-weight: var(--font-weight-normal);
-  line-height: var(--line-height-heading-4xl);
+  line-height: var(--line-height-heading-2xl);
 }
 
 .rankingRow {
@@ -216,31 +215,6 @@
   background: currentColor;
   -webkit-mask: url("../../../design-system/assets/icons/action/post-drafts.svg") center / contain no-repeat;
   mask: url("../../../design-system/assets/icons/action/post-drafts.svg") center / contain no-repeat;
-}
-
-.priceRow {
-  flex-wrap: wrap;
-  gap: var(--space-100);
-}
-
-.priceCurrent {
-  color: var(--text-emphasis);
-  font-size: var(--font-size-heading-2xl);
-  font-weight: var(--font-weight-emphasize);
-  line-height: var(--line-height-heading-2xl);
-}
-
-.priceOriginal {
-  color: var(--text-secondary);
-  font-size: var(--font-size-strike-md);
-  line-height: var(--line-height-strike-md);
-  text-decoration: line-through;
-}
-
-.discountText {
-  color: var(--text-secondary);
-  font-size: var(--font-size-body-md);
-  line-height: var(--line-height-body-md);
 }
 
 .optionStack {
@@ -443,6 +417,14 @@
   margin-left: auto;
 }
 
+.affiliateLinkButton {
+  margin-left: var(--space-100);
+}
+
+.affiliateLinkButton:not([aria-disabled="true"]):active {
+  transform: translateY(var(--stroke-default));
+}
+
 .purchaseStickyGroup {
   position: sticky;
   top: var(--space-300);
@@ -458,6 +440,12 @@
   flex-direction: column;
   gap: var(--space-200);
   padding-top: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .quantityButton:not([aria-disabled="true"]):hover {
+    background-color: var(--brand-tertiary);
+  }
 }
 
 .quantityButton,
@@ -629,6 +617,16 @@
 }
 
 @media (min-width: 1024px) {
+  .productOverview {
+    --pdp-gallery-width: clamp(
+      calc(var(--space-1000) * 3 + var(--space-500)),
+      calc(31.25vw - var(--space-500)),
+      calc(var(--space-1000) * 7)
+    );
+
+    grid-template-columns: var(--pdp-gallery-width) minmax(0, 1fr);
+  }
+
   .purchaseTags[data-expanded="false"] > li:nth-child(n + 4) {
     display: none;
   }
@@ -1011,6 +1009,10 @@
     align-self: start;
   }
 
+  .gallery[data-zoom-active="true"] {
+    z-index: 2;
+  }
+
   .nutritionLabel {
     padding-inline: var(--space-150);
   }
@@ -1280,12 +1282,6 @@
     order: 4;
   }
 
-  .priceRow {
-    order: 5;
-    margin-top: var(--space-050);
-    padding-block: var(--space-0);
-  }
-
   .productSummary .bestBefore {
     order: 6;
     border-block-start: var(--stroke-default) solid var(--divider-default);
@@ -1391,11 +1387,6 @@
 
   .quantityRow > .purchaseLabel {
     display: none;
-  }
-
-  .title {
-    font-size: var(--font-size-body-xl);
-    line-height: var(--line-height-body-xl);
   }
 
 }

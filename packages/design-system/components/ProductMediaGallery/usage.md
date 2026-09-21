@@ -13,10 +13,37 @@ The active image is product identity content, so empty alt text is not valid.
 Thumbnail images are decorative because their buttons already announce the
 full image position and alt text.
 
+For a labeled reference image such as a nutrition panel, set
+`thumbnailOverlayLabel` on that image. Keep this reference image at
+the end of the ordered image list and set `thumbnailPinned` when it must remain
+visible in the final position of the first thumbnail viewport. The other
+thumbnails continue to scroll behind their own viewport. When every thumbnail
+fits, the labeled reference image stays inline immediately after the other
+images instead of leaving an empty gap at the edge; it pins to the final visible
+slot only when the regular thumbnail rail overflows. The edge fade appears only
+in that pinned-overflow state. On desktop, main-gallery thumbnails use six
+complete slots from 424px upward, including the pinned slot, and stay within the
+64–88px range. At the 560px gallery maximum, the six slots resolve to about
+86.7px so five regular thumbnails and the pinned reference remain complete.
+Narrower containers step down to five or four complete slots. Preview-dialog
+thumbnails retain their existing sizing.
+
+The component's 560px maximum applies only from the 1024px desktop breakpoint.
+The PDP sizes the gallery continuously from 280px at a 1024px viewport to 560px
+at a 1920px viewport. Tablet and mobile layouts remain full-width so their
+horizontal image rail can use the complete viewport without clipping the active
+slide.
+
 The thumbnail rail sits under the square stage at every viewport and scrolls
 horizontally when it exceeds the available width. The component consumes
 YAMI surface, border, focus, radius, typography, and spacing tokens; callers
 control only the image data and localized labels.
+
+On hover-capable desktops, hovering any thumbnail selects its image. Clicking a
+thumbnail remains a selection fallback for keyboard, touch, and hybrid input.
+Labeled reference thumbnails follow the same rule: hover selects the reference
+image, then clicking the main image opens the full-viewport preview at that
+selection. A thumbnail never opens the preview directly.
 
 The non-interactive image counter is 24px tall including its border at every
 breakpoint. It shares ProductCardAddButton's translucent surface, 1px border,
@@ -48,8 +75,15 @@ Resizing keeps the active image aligned; empty galleries render nothing.
 
 Set `desktopPreview` on PDPs to open the selected image in a full-viewport
 preview from 1024px. Provide localized `openPreviewLabel` and `closePreviewLabel`.
-The preview uses the primary surface, a centered contained image, a scrollable
-left thumbnail column with previous/next controls, and a top-right close button.
+Set `desktopZoom` to show an Amazon-style magnified pane beside the gallery while
+a fine pointer moves over the main image. A bounded translucent lens identifies
+the sampled region. Use `desktopZoomPaneWidth` when the pane must match an
+adjacent responsive column; its height follows that width to remain square.
+Zoom is disabled below 1024px and for coarse pointers; the main image remains
+the preview trigger at every enabled breakpoint.
+The preview uses the primary surface, a contained image centered in the available
+left stage, a scrollable right thumbnail column with previous/next controls, and
+a top-right close button.
 The gallery and preview share selection. Arrow keys switch images; Escape or
 the close button dismisses the native modal and restores trigger focus and page
 scroll. Set `mobilePreview` to also enable tap-to-preview below 1024px: a white
