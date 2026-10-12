@@ -60,7 +60,13 @@ const verifyBeveragePage: Story["play"] = async ({ canvasElement, globals }) => 
   await expect(getComputedStyle(bestBefore).borderTopStyle).toBe(mobile ? "solid" : "none");
   await expect(bestBefore.getBoundingClientRect().top).toBeGreaterThanOrEqual(bestBefore.previousElementSibling!.getBoundingClientRect().bottom);
   await expect(canvasElement.querySelector('[data-pdp-add-to-cart]')).toBeEnabled();
-  await expect(canvasElement.querySelectorAll('[data-slot="product-media-gallery-thumbnail"]')).toHaveLength(11);
+  const thumbnails = canvasElement.querySelectorAll<HTMLButtonElement>('[data-slot="product-media-gallery-thumbnail"]');
+  if (mobile) {
+    await expect(thumbnails).toHaveLength(fixture.images.length);
+  } else {
+    await expect(thumbnails).toHaveLength(4);
+    await expect(canvasElement.querySelector('[data-slot="product-media-gallery-more-thumbnail"]')).toBeVisible();
+  }
   await expect(canvasElement.querySelector('[data-pdp-module="brand-products"]')).toBeNull();
   await expect(canvasElement.querySelector('[data-pdp-module="recently-viewed"]')).toBeNull();
   if (!mobile) {
@@ -73,7 +79,6 @@ const verifyBeveragePage: Story["play"] = async ({ canvasElement, globals }) => 
   await userEvent.click(canvas.getByRole("button", { name: fixture.copy.decreaseQuantity, exact: true }));
   await expect(canvasElement.querySelector("output")).toHaveTextContent("1");
 
-  const thumbnails = canvasElement.querySelectorAll<HTMLButtonElement>('[data-slot="product-media-gallery-thumbnail"]');
   if (!mobile) {
     await userEvent.click(thumbnails[1]!);
     await expect(thumbnails[1]).toHaveAttribute("aria-pressed", "true");
@@ -153,7 +158,10 @@ const verifyBeveragePage: Story["play"] = async ({ canvasElement, globals }) => 
     const sheet = canvas.getByRole("dialog", { name: fixture.nutrition!.title });
     await expect(sheet).toBeVisible();
     await expect(getComputedStyle(sheet).backgroundColor).toBe("rgb(255, 255, 255)");
-    await expect(getComputedStyle(sheet).borderTopLeftRadius).toBe("12px");
+    await expect(getComputedStyle(sheet).borderTopLeftRadius).toBe("16px");
+    await expect(getComputedStyle(sheet).borderTopRightRadius).toBe("16px");
+    await expect(getComputedStyle(sheet).borderBottomLeftRadius).toBe("0px");
+    await expect(getComputedStyle(sheet).borderBottomRightRadius).toBe("0px");
     await expect(getComputedStyle(root).overflow).toBe("hidden");
     await expect(sheet.getBoundingClientRect().bottom).toBeCloseTo(root.clientHeight, 0);
     const sheetCanvas = within(sheet);
