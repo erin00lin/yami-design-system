@@ -16,7 +16,7 @@
       "canvas": 24
     },
     "base": {
-      "count": 46,
+      "count": 49,
       "canvas": 24
     },
     "category": {
@@ -32,7 +32,7 @@
       "canvas": 24
     },
     "social": {
-      "count": 11,
+      "count": 12,
       "canvas": 24
     },
    "social-monochrome": {
@@ -346,6 +346,14 @@
       "sha1": "92734e3515"
     },
     {
+      "name": "deal",
+      "category": "base",
+      "path": "assets/icons/base/deal.svg",
+      "width": 24,
+      "height": 24,
+      "sha1": "b17e87074d"
+    },
+    {
       "name": "delivery-fill",
       "category": "base",
       "path": "assets/icons/base/delivery-fill.svg",
@@ -392,6 +400,14 @@
       "width": 24,
       "height": 24,
       "sha1": "44a7f35c34"
+    },
+    {
+      "name": "gift-line",
+      "category": "base",
+      "path": "assets/icons/base/gift-line.svg",
+      "width": 24,
+      "height": 24,
+      "sha1": "f94610cb6b"
     },
     {
       "name": "image",
@@ -520,6 +536,14 @@
       "width": 24,
       "height": 24,
       "sha1": "67f35da13d"
+    },
+    {
+      "name": "promotion",
+      "category": "base",
+      "path": "assets/icons/base/promotion.svg",
+      "width": 24,
+      "height": 24,
+      "sha1": "1564df1602"
     },
     {
       "name": "protection-fill",
@@ -888,6 +912,14 @@
       "width": 24,
       "height": 24,
       "sha1": "31531f2b1f"
+    },
+    {
+      "name": "x",
+      "category": "social",
+      "path": "assets/icons/social/x.svg",
+      "width": 24,
+      "height": 24,
+      "sha1": "78c69612bd"
     },
     {
       "name": "youtube",
